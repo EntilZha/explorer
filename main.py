@@ -15,6 +15,14 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
+async def home(request: Request):
+    with create_session() as session:
+        qanta_id = random.choice(all_qanta_ids)
+        question = session.query(Question).filter_by(qanta_id=qanta_id).first().to_dict()
+    return templates.TemplateResponse("question.html.jinja2", {'request': request, **question})
+
+
+@app.get("/qanta/question/random")
 async def read_random_question(request: Request):
     with create_session() as session:
         qanta_id = random.choice(all_qanta_ids)
@@ -22,7 +30,7 @@ async def read_random_question(request: Request):
     return templates.TemplateResponse("question.html.jinja2", {'request': request, **question})
 
 
-@app.get("/question/{qanta_id}")
+@app.get("/qanta/question/{qanta_id}")
 async def read_question(request: Request, qanta_id: int):
     with create_session() as session:
         question = session.query(Question).filter_by(qanta_id=qanta_id).first().to_dict()
