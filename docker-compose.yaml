@@ -5,4 +5,4 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - ./data:./data
+      - ./data:/app/data
