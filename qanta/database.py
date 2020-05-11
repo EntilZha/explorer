@@ -22,7 +22,9 @@ from qanta.log import get_logger
 
 
 Base = declarative_base()
-engine = create_engine("sqlite:///data/qanta_viewer.sqlite3")
+engine = create_engine(
+    "sqlite:///data/qanta_viewer.sqlite3", connect_args={"check_same_thread": False}
+)
 SessionLocal = scoped_session(
     sessionmaker(bind=engine, autoflush=False, autocommit=False)
 )
