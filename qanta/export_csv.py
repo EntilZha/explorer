@@ -27,12 +27,11 @@ def main(output: str):
         )
 
     rows = []
-    for page, batch in grouped.items():
+    for batch in grouped.values():
         rows.extend(batch)
     df = pd.DataFrame(
         rows, columns=["qanta_id", "qdb_id", "proto_id", "answer", "raw_answer"]
     )
-    print(df.head())
     df.to_csv(output)
 
 
