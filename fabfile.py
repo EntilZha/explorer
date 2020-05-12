@@ -11,4 +11,5 @@ def deploy(conn):
     with conn.cd("~/qanta-viewer"):
         log.info(conn.run("docker-compose down"))
         log.info(conn.run("git pull origin master"))
+        log.info(conn.run("docker-compose build"))
         log.info(conn.run("docker-compose up -d"))
