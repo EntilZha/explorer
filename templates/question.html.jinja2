@@ -140,13 +140,23 @@
                   >Raw Answer: {{ answer }}</span
                 >
               </h6>
-              <p class="card-text">{{ text }}</p>
+              <p class="card-text">
+                {% if text_with_buzzes is none %}
+                {{ text }}
+                {% else %}
+                {{ text_with_buzzes | safe }}
+                {% endif %}
+              </p>
 
               <hr />
-              <h6>Gameplay Records (Total: {{ n_plays }})</h6>
+              <h6>
+                Gameplay Records (Total: {{ n_plays }}, First 5 Unique Player
+                Buzzes Shown Above)
+              </h6>
               <table class="table table-striped table-hover">
                 <thead>
                   <tr>
+                    <th scope="col">ID</th>
                     <th scope="col">Date</th>
                     <th scope="col">Buzz Fraction</th>
                     <th scope="col">Guess</th>
@@ -156,6 +166,7 @@
                 <tbody>
                   {% for event in plays %}
                   <tr>
+                    <td>{{ event.user_id[:2] }}</td>
                     <td>{{ event.date }}</td>
                     <td>{{ event.buzzing_position_str }}</td>
                     <td>{{ event.guess }}</td>

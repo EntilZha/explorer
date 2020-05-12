@@ -68,7 +68,7 @@ class Question(Base):
     dataset = Column(String)
     plays = relationship("PlayEvent")
 
-    def to_dict(self):
+    def to_dict(self, include_buzzes=False, max_buzzes=5):
         return {
             "qanta_id": self.qanta_id,
             "text": self.text,
@@ -85,7 +85,41 @@ class Question(Base):
             "proto_id": self.proto_id,
             "qdb_id": self.proto_id,
             "dataset": self.dataset,
+            "text_with_buzzes": self.text_with_buzzes(max_buzzes=5)
+            if include_buzzes
+            else None,
         }
+
+    def text_with_buzzes(self, max_buzzes: int = 5):
+        filtered_events = []
+        seen_players = set()
+        for event in self.plays:
+            if event.user_id in seen_players:
+                continue
+            filtered_events.append(event)
+            seen_players.add(event.user_id)
+
+        tokens = self.text.split()
+        n_tokens = len(tokens)
+        modified_tokens = []
+        buzzed_players = set()
+        for idx, tok in enumerate(tokens):
+            for event in filtered_events:
+                if event.user_id in buzzed_players or len(buzzed_players) >= max_buzzes:
+                    continue
+
+                if idx / n_tokens > event.buzzing_position:
+                    buzzed_players.add(event.user_id)
+                    if event.result == "wrong":
+                        modified_tokens.append(
+                            rf'<span class="badge badge-pill badge-danger">{len(buzzed_players)}</span>'
+                        )
+                    elif event.result == "correct":
+                        modified_tokens.append(
+                            rf'<span class="badge badge-pill badge-success">{len(buzzed_players)}</span>'
+                        )
+            modified_tokens.append(tok)
+        return " ".join(modified_tokens)
 
 
 class PlayEvent(Base):

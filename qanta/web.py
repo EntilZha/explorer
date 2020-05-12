@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 
-from qanta.database import SessionLocal, Question, get_db, PlayEvent
+from qanta.database import SessionLocal, Question, get_db
 
 
 app = FastAPI()
@@ -24,15 +24,16 @@ def get_all_qanta_ids(db):
 
 
 def get_html_question(db, request, qanta_id: int, n: int = 15):
-    question = db.query(Question).filter_by(qanta_id=qanta_id).first().to_dict()
-    records = (
-        db.query(PlayEvent).filter_by(qanta_id=qanta_id).order_by(PlayEvent.date).all()
+    question = db.query(Question).filter_by(qanta_id=qanta_id).first()
+    question_dict = question.to_dict(include_buzzes=True)
+    records = sorted(
+        [r for r in question.plays if r.result != "prompt"], key=lambda r: r.date
     )
     n_records = len(records)
     sample = [r.to_dict() for r in records[:n]]
     return templates.TemplateResponse(
         "question.html.jinja2",
-        {"request": request, "plays": sample, "n_plays": n_records, **question},
+        {"request": request, "plays": sample, "n_plays": n_records, **question_dict},
     )
 
 
