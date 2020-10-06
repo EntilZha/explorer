@@ -1,11 +1,12 @@
 import os
+import json
 import subprocess
 
 import typer
 
 from pedroai.io import eprint
 
-from qanta.database import build_db
+from explorer.database import build_db, build_curiosity
 
 DATA_PATH = "data/"
 FILES = [
@@ -41,6 +42,22 @@ app = typer.Typer()
 @app.command()
 def populate():
     build_db()
+
+
+@app.command()
+def populate_curiosity():
+    build_curiosity()
+
+
+@app.command()
+def qb_stats():
+    with open("data/qanta.mapped.2018.04.18.json") as f:
+        questions = json.load(f)["questions"]
+        pages = set()
+        for q in questions:
+            if q["page"] is not None:
+                pages.add(q["page"])
+        eprint(f"Number of pages/classes: {len(pages)}")
 
 
 @app.command()

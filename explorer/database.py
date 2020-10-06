@@ -1,9 +1,12 @@
+from typing import List
 import json
 from contextlib import contextmanager
 
 import pandas as pd
 from tqdm import tqdm
+
 from pedroai.math import to_precision
+from pedroai.io import read_json
 
 from sqlalchemy import (
     Column,
@@ -17,8 +20,10 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, scoped_session
+from sqlalchemy.exc import OperationalError
 
-from qanta.log import get_logger
+from explorer.log import get_logger
+from explorer.curiosity.data import CuriosityDialog
 
 
 Base = declarative_base()
@@ -144,6 +149,23 @@ class PlayEvent(Base):
         }
 
 
+class CuriosityDbDialog(Base):
+    """
+    The full dialog data is stored in `data`.
+    Other fields are primarily for convenience for use
+    in DB queries.
+    """
+
+    __tablename__ = "curiosity_dialog"
+    dialog_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer)
+    assistant_id = Column(Integer)
+    topic = Column(String)
+    aspect_1 = Column(String)
+    aspect_2 = Column(String)
+    data = Column(String)
+
+
 def build_db():
     log.info("Dropping and Creating DB")
     try:
@@ -151,10 +173,50 @@ def build_db():
     except:
         pass
     Base.metadata.create_all(bind=engine)
+    build_qanta()
+    build_curiosity()
 
+
+def load_curiosity() -> List[CuriosityDialog]:
+    dialogs: List[CuriosityDialog] = []
+    for fold in ["train", "val", "test", "test_zero"]:
+        for d in read_json(f"data/curiosity/curiosity_dialogs.{fold}.json")["dialogs"]:
+            dialogs.append((fold, CuriosityDialog(**d)))
+    return dialogs
+
+
+def build_curiosity():
+    log.info("Dropping Prior viersion")
+    try:
+        Base.metadata.tables["curiosity_dialog"].drop(bind=engine)
+    except OperationalError:
+        pass
+    Base.metadata.tables["curiosity_dialog"].create(bind=engine)
+    log.info("Loading curiosity dialogs")
+    dialogs = load_curiosity()
+
+    with get_db_context() as db:
+        log.info("Writing dialogs")
+        for fold, d in tqdm(dialogs):
+            db.add(
+                CuriosityDbDialog(
+                    dialog_id=d.dialog_id,
+                    user_id=d.user_id,
+                    assistant_id=d.assistant_id,
+                    topic=d.focus_entity,
+                    aspect_1=d.first_aspect,
+                    aspect_2=d.second_aspect,
+                    data=d.json(),
+                )
+            )
+        log.info("Committing dialogs")
+        db.commit()
+
+
+def build_qanta():
     log.info("Loading data")
     with open("data/qanta.mapped.2018.04.18.json") as f:
-        questions = [q for q in json.load(f)["questions"] if q["page"] is not None]
+        questions = [q for q in json.load(f)["questions"]]
 
     df = pd.read_hdf("data/protobowl-042818.log.h5")
     proto_id_to_qanta = {}
@@ -162,9 +224,8 @@ def build_db():
     with get_db_context() as db:
         log.info("Writing questions")
         for q in tqdm(questions):
-            if q["proto_id"] is None:
-                continue
-            proto_id_to_qanta[q["proto_id"]] = q["qanta_id"]
+            if q["proto_id"] is not None:
+                proto_id_to_qanta[q["proto_id"]] = q["qanta_id"]
             db.add(
                 Question(
                     qanta_id=q["qanta_id"],

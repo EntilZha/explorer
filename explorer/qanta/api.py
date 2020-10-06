@@ -1,18 +1,13 @@
 import random
 
 from fastapi import FastAPI, Request, Depends
-from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from explorer.database import SessionLocal, Question, get_db
 
-from qanta.database import SessionLocal, Question, get_db
-
-
-app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-
+qanta_app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+
 CACHED_QANTA_IDS = []
 
 
@@ -23,7 +18,7 @@ def get_all_qanta_ids(db):
     return CACHED_QANTA_IDS
 
 
-def get_html_question(db, request, qanta_id: int, n: int = 15):
+def get_html_qanta_question(db, request, qanta_id: int, n: int = 15):
     question = db.query(Question).filter_by(qanta_id=qanta_id).first()
     question_dict = question.to_dict(include_buzzes=True)
     records = sorted(
@@ -37,33 +32,27 @@ def get_html_question(db, request, qanta_id: int, n: int = 15):
     )
 
 
-@app.get("/")
-async def home(request: Request, db: SessionLocal = Depends(get_db)):
-    qanta_id = random.choice(get_all_qanta_ids(db))
-    return get_html_question(db, request, qanta_id)
-
-
-@app.get("/qanta/question/random")
+@qanta_app.get("/question/random")
 async def read_random_question(request: Request, db: SessionLocal = Depends(get_db)):
     qanta_id = random.choice(get_all_qanta_ids(db))
-    return get_html_question(db, request, qanta_id)
+    return get_html_qanta_question(db, request, qanta_id)
 
 
-@app.get("/qanta/question/{qanta_id}")
+@qanta_app.get("/question/{qanta_id}")
 async def read_question(
     request: Request, qanta_id: int, db: SessionLocal = Depends(get_db)
 ):
-    return get_html_question(db, request, qanta_id)
+    return get_html_qanta_question(db, request, qanta_id)
 
 
-@app.get("/api/qanta/v1/random")
+@qanta_app.get("/api/qanta/v1/random")
 def get_random_question(db: SessionLocal = Depends(get_db)):
     qanta_id = random.choice(get_all_qanta_ids(db))
     question = db.query(Question).filter_by(qanta_id=qanta_id).first()
     return question.to_dict()
 
 
-@app.get("/api/qanta/v1/{qanta_id}")
+@qanta_app.get("/api/qanta/v1/{qanta_id}")
 def get_question(qanta_id: int, db: SessionLocal = Depends(get_db)):
     question = db.query(Question).filter_by(qanta_id=qanta_id).first()
     return question.to_dict()

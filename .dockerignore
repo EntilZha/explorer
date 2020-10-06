@@ -1,1 +1,4 @@
-data
+.git/
+models/
+experiments/
+dialog_data/

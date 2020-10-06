@@ -1,0 +1,48 @@
+{% extends "base.html.jinja2" %} {% block content %}
+<div class="row">
+  <div class="col-sm">
+    <div class="card">
+      <div class="card-header">Curiosity Dialog</div>
+      <div class="card-body">
+        <h5 class="card-title">Curiosity ID: {{ dialog.dialog_id }}</h5>
+        <h6 class="card-subtitle mb-2">
+          <span class="badge badge-info">Topic: {{ dialog.focus_entity }}</span>
+        </h6>
+        <h6 class="card-subtitle mb-2">
+          <span class="badge badge-info"
+            >Aspects: {{ dialog.aspects | join(",") }}</span
+          >
+        </h6>
+        <h6>Messages</h6>
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Sender</th>
+              <th scope="col">Dialog Acts</th>
+              <th scope="col">Liked</th>
+              <th scope="col">Message</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for msg in dialog.messages %}
+            <tr>
+              <td>{{ msg.sender }}</td>
+              <td>{{ msg.dialog_acts }}</td>
+              <td>{{ msg.liked }}</td>
+              <td>{{ msg.message }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer text-muted">
+        <a href="/curiosity/dialog/{{ dialog.dialog_id }}"
+          >Permanent Link: datasets.pedro.ai/curiosity/dialog/{{
+            dialog.dialog_id
+          }}</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

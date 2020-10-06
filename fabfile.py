@@ -1,6 +1,6 @@
 from fabric import task
 
-from qanta.log import get_logger
+from explorer.log import get_logger
 
 
 log = get_logger(__name__)

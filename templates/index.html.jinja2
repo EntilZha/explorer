@@ -1,0 +1,31 @@
+{% extends "base.html.jinja2" %} {% block content %}
+<h1>Datasets</h1>
+{% for d in datasets %}
+<div class="row" style="margin-top: 20px">
+  <div class="col-sm">
+    <div class="card">
+      <div class="card-header">{{ d.name }}</div>
+      <div class="card-body">
+        <h5 class="card-title"></h5>
+        <h4 class="card-subtitle mb-2">
+          <span class="badge badge-info">Paper</span> {{ d.paper }}
+        </h4>
+        <h4 class="card-subtitle mb-2">
+          <span class="badge badge-success">Type</span>
+          {{ d.type }}
+        </h4>
+        <h4 class="card-subtitle mb-2">
+          <span class="badge badge-warning">Bibliography</span>
+        </h4>
+        <code style="white-space: pre-wrap">{{ d.bib }} </code>
+        <p class="card-text">
+          {{ d.description }}
+        </p>
+        <a href="/dataset/qanta" class="btn btn-primary active" role="button"
+          >Explore the Curiosity Dataset</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %} {% endblock %}

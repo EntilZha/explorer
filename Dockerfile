@@ -1,15 +1,11 @@
-FROM python:3.8
+FROM python:3.7
 
-RUN pip install poetry
-RUN mkdir /app
-WORKDIR /app
-VOLUME /app/data
+RUN mkdir -p /code/dataset-explorer
+RUN mkdir /code/dataset-explorer/data
+WORKDIR /code/dataset-explorer
+VOLUME /code/dataset-explorer/data
 
-COPY pyproject.toml poetry.lock /app/
-RUN poetry install
-
-EXPOSE 80
-
-COPY . /app
-
-CMD ["poetry", "run", "uvicorn", "qanta.web:app", "--host", "0.0.0.0", "--port", "9000"]
+RUN pip install poetry==1.1.1
+COPY pyproject.toml poetry.lock /code/dataset-explorer/
+RUN poetry export --without-hashes -f requirements.txt > reqs.txt \
+    && pip install -r reqs.txt
