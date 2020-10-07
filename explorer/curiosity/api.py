@@ -15,11 +15,23 @@ curiosity_app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
 
-def get_html_dialog(db, request, dialog_id: int):
+def get_html_dialog(db, request: Request, dialog_id: int):
     dialog = db.query(CuriosityDbDialog).filter_by(dialog_id=dialog_id).first()
+    if dialog is None:
+        return templates.TemplateResponse(
+            "missing.html.jinja2",
+            {"request": request, "data_id": dialog_id, "data_name": "Curiosity Dialog"},
+            status_code=404,
+        )
     data = CuriosityDialog.parse_raw(dialog.data)
+    dialog_facts = {}
+    for msg in data.messages:
+        for f in msg.facts:
+            dialog_facts[f.fid] = fact_lookup[f.fid]
+
     return templates.TemplateResponse(
-        "curiosity.html.jinja2", {"request": request, "dialog": data},
+        "curiosity/dialog.html.jinja2",
+        {"request": request, "dialog": data, "facts": dialog_facts},
     )
 
 
@@ -31,7 +43,7 @@ def get_all_curiosity_ids(db):
 
 
 @curiosity_app.get("/dialog/random")
-async def read_random_question(request: Request, db: SessionLocal = Depends(get_db)):
+async def read_random_dialog(request: Request, db: SessionLocal = Depends(get_db)):
     dialog_id = random.choice(get_all_curiosity_ids(db))
     return get_html_dialog(db, request, dialog_id)
 

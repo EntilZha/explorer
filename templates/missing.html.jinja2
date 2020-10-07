@@ -1,0 +1,9 @@
+{% extends "base.html.jinja2" %} {% block content %}
+<div class="row">
+  <div class="col-sm">
+    <div class="alert alert-danger" role="alert">
+      {{ data_name }} not found: {{ data_id }}
+    </div>
+  </div>
+</div>
+{% endblock %}

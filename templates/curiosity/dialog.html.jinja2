@@ -1,0 +1,21 @@
+{% extends "base.html.jinja2" %} {% block scripts %}
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<script
+  src="https://unpkg.com/react@16/umd/react.production.min.js"
+  crossorigin
+></script>
+<script
+  src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"
+  crossorigin
+></script>
+<script>
+  var dialog = {{ dialog.dict() | tojson }};
+  var facts = {{ facts | tojson }};
+</script>
+{% include 'curiosity/dialog_react.html' %} {% endblock %} {% block content %}
+<div class="row">
+  <div class="col-sm">
+    <div id="dialog"></div>
+  </div>
+</div>
+{% endblock %}

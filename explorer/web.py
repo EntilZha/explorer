@@ -42,7 +42,9 @@ async def qanta_dataset(request: Request, db: SessionLocal = Depends(get_db)):
 
 @app.get("/dataset/curiosity")
 async def curiosity_dataset(request: Request, db: SessionLocal = Depends(get_db)):
-    return templates.TemplateResponse("curiosity.html.jinja2", {"request": request})
+    return templates.TemplateResponse(
+        "curiosity/landing.html.jinja2", {"request": request}
+    )
 
 
 if __name__ == "__main__":

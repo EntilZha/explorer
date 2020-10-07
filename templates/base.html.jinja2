@@ -19,12 +19,15 @@
       integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="/static/css/open-iconic-bootstrap.css" />
+    {% block scripts %} {% endblock %}
   </head>
 
   <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+      <img style="margin-right: 20px" src="/static/images/pedroai-logo.png" />
       <a class="navbar-brand" href="http://datasets.pedro.ai/"
-        >PedroAI Dataset Viewer</a
+        >NLP Dataset Explorer</a
       >
       <button
         class="navbar-toggler"
@@ -48,7 +51,7 @@
         </ul>
         <ul class="navbar-nav">
           <li class="nav-item active">
-            <a class="nav-link" href="https://www.pedro.ai">pedro.ai</a>
+            <a class="nav-link" href="https://www.pedro.ai">Go to pedro.ai</a>
           </li>
         </ul>
       </div>
@@ -68,6 +71,7 @@
           top: 56px;
           border: 0;
           right: 0;
+          z-index: 1000;
         "
         aria-hidden="true"
       >
@@ -111,7 +115,7 @@
       }
     </style>
 
-    <main role="main" class="container" style="margin-top: 30px">
+    <main role="main" class="container-fluid" style="margin-top: 30px">
       {% block content %}{% endblock %}
     </main>
 
