@@ -60,7 +60,7 @@ async def read_question(
 ):
     topic_dialogs = db.query(CuriosityDbDialog.topic == topic).all()
     n = len(topic_dialogs)
-    return tempaltes.TemplateResponse(
+    return templates.TemplateResponse(
         "curiosity/topics.html.jinja2",
         {'request': request, 'dialogs': topic_dialogs, 'n': n, 'topic': topic}
     )
