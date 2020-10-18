@@ -165,6 +165,7 @@ class CuriosityDbDialog(Base):
     aspect_2 = Column(String)
     data = Column(String)
 
+    @property
     def url(self):
         return f'https://datasets.pedro.ai/curiosity/dialog/{dialog_id}'
 
