@@ -167,7 +167,7 @@ class CuriosityDbDialog(Base):
 
     @property
     def url(self):
-        return f'https://datasets.pedro.ai/curiosity/dialog/{dialog_id}'
+        return f'https://datasets.pedro.ai/curiosity/dialog/{self.dialog_id}'
 
 
 def build_db():
