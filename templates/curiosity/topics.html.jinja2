@@ -1,0 +1,30 @@
+{% extends "base.html.jinja2" %} {% block scripts %}
+{% block content %}
+<div class="row">
+  <div class="col-sm">
+  <p>{{ n }} Dialogs with topic "{{ topic }}"
+   <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Topic</th>
+              <th scope="col">Aspect 1</th>
+              <th scope="col">Aspect 2</th>
+              <th scope="col">URL</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in dialogs %}
+            <tr>
+              <td>{{ d.user_id[:2] }}</td>
+              <td>{{ d.focus_entity }}</td>
+              <td>{{ d.aspect_1}}</td>
+              <td>{{ d.aspect_2}}</td>
+              <td>{{ d.url }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+  </div>
+</div>
+{% endblock %}

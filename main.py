@@ -26,6 +26,26 @@ FILES = [
         "https://s3-us-west-2.amazonaws.com/pinafore-us-west-2/qanta-jmlr-datasets/qanta.mapped.2018.04.18.json",
         "data/qanta.mapped.2018.04.18.json",
     ),
+    (
+        "http://curiosity.umiacs.io/curiosity_dialogs.json",
+        "data/curiosity_dialogs.json",
+    ),
+    (
+        "http://curiosity.umiacs.io/curiosity_dialogs.train.json",
+        "data/curiosity_dialogs.train.json",
+    ),
+    (
+        "http://curiosity.umiacs.io/curiosity_dialogs.val.json",
+        "data/curiosity_dialogs.val.json",
+    ),
+    (
+        "http://curiosity.umiacs.io/curiosity_dialogs.test.json",
+        "data/curiosity_dialogs.test.json",
+    ),
+    (
+        "http://curiosity.umiacs.io/curiosity_dialogs.test_zero.json",
+        "data/curiosity_dialogs.test_zero.json",
+    ),
 ]
 
 

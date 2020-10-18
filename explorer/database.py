@@ -165,6 +165,9 @@ class CuriosityDbDialog(Base):
     aspect_2 = Column(String)
     data = Column(String)
 
+    def url(self):
+        return f'https://datasets.pedro.ai/curiosity/dialog/{dialog_id}'
+
 
 def build_db():
     log.info("Dropping and Creating DB")
