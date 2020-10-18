@@ -4,6 +4,7 @@ paper = "Quizbowl: The Case for Incremental Question Answering"
 type = "Factoid Question Answering"
 bib = ""
 description = "Qanta is a factoid question answering dataset based on Quizbowl."
+slug = "qanta"
 
 [datasets.curiosity]
 name = "Curiosity Dataset"
@@ -17,3 +18,4 @@ bib = """\
     booktitle = {Empirical Methods in Natural Language Processing}
 }"""
 description = "The Curiosity dataset is an information-seeking dialog dataset."
+slug = "curiosity"
