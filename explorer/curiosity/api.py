@@ -58,7 +58,7 @@ async def read_question(
 async def read_question(
     request: Request, topic: str, db: SessionLocal = Depends(get_db)
 ):
-    topic_dialogs = db.query(CuriosityDbDialog.focus_entity == topic).all()
+    topic_dialogs = db.query(CuriosityDbDialog.topic == topic).all()
     n = len(topic_dialogs)
     return tempaltes.TemplateResponse(
         "curiosity/topics.html.jinja2",
