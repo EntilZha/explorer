@@ -1,5 +1,40 @@
-{% extends "base.html.jinja2" %} {% block content %}
+{% extends "base.html.jinja2" %}
+{% block scripts %}
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<script
+  src="https://unpkg.com/react@16/umd/react.production.min.js"
+  crossorigin
+></script>
+<script
+  src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"
+  crossorigin
+></script>
+{% include 'curiosity/listing_react.html' %}
+{% endblock %}
+{% block content %}
 <div class="row">
-  <div class="col-sm">Curiosity Dataset landing page</div>
+  <div class="col-sm-10" style="margin: 0 auto;">
+    <div class="card" >
+  <div class="card-body">
+    <h5 class="card-title">Information Seeking in the Spirit of Learning: a Dataset for
+      Conversational Curiosity</h5>
+    <h6 class="card-subtitle mb-8 text-muted">Citation: Please cite our paper like this</h6>
+    <p class="card-text">
+    <div class="alert alert-info" role="alert">
+      <pre>
+@inproceedings{rodriguez2020curiosity,
+    title = {Information Seeking in the Spirit of Learning: a Dataset for Conversational Curiosity},
+    author = {Pedro Rodriguez and Paul Crook and Seungwhan Moon and Zhiguang Wang},
+    year = 2020,
+    booktitle = {Empirical Methods in Natural Language Processing}
+}</pre
+      ></div></p>
+    <a href="https://github.com/facebookresearch/curiosity" class="card-link" target="_blank">Model Code</a>
+    <a href="https://github.com/entilzha/publications" class="card-link" target="_blank">Paper Code</a>
+    <a href="https://www.pedro.ai/static/publications/2020_emnlp_curiosity.paper.pdf" class="card-link" target="_blank">Paper</a>
+  </div>
+</div>
+<div id="dialog-listing" style="margin-top:30px"></div>
+  </div>
 </div>
 {% endblock %}

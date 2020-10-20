@@ -1,4 +1,6 @@
+from typing import Optional
 import random
+import math
 
 from fastapi import FastAPI, Request, Depends
 from fastapi.templating import Jinja2Templates
@@ -54,6 +56,7 @@ async def read_question(
 ):
     return get_html_dialog(db, request, dialog_id)
 
+
 @curiosity_app.get("/dialog/topic/{topic}")
 async def read_question(
     request: Request, topic: str, db: SessionLocal = Depends(get_db)
@@ -62,6 +65,40 @@ async def read_question(
     n = len(topic_dialogs)
     return templates.TemplateResponse(
         "curiosity/topics.html.jinja2",
-        {'request': request, 'dialogs': topic_dialogs, 'n': n, 'topic': topic}
+        {"request": request, "dialogs": topic_dialogs, "n": n, "topic": topic},
     )
 
+
+@curiosity_app.get("/dialogs")
+async def get_dialogs(
+    request: Request,
+    topic: Optional[str] = None,
+    limit: int = 10,
+    page: int = 1,
+    db: SessionLocal = Depends(get_db),
+):
+    if topic is None:
+        dialogs = db.query(CuriosityDbDialog).limit(limit).offset((page - 1) * limit)
+        total = db.query(CuriosityDbDialog).count()
+    else:
+        dialogs = (
+            db.query(CuriosityDbDialog)
+            .filter_by(topic=topic)
+            .limit(limit)
+            .offset((page - 1) * limit)
+        )
+        total = db.query(CuriosityDbDialog).filter_by(topic=topic).count()
+    total_pages = math.ceil(total / limit)
+    return {
+        "dialogs": [CuriosityDialog.parse_raw(d.data) for d in dialogs],
+        "n_dialogs": total,
+        "n_pages": total_pages,
+        "page": page,
+        "topic": topic,
+    }
+
+
+@curiosity_app.get("/topics")
+async def get_dialogs(request: Request, db: SessionLocal = Depends(get_db)):
+    topics = db.query(CuriosityDbDialog.topic).distinct().all()
+    return {"topics": topics}
