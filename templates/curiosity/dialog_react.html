@@ -1,9 +1,14 @@
+{% raw %}
 <script type="text/babel">
   class Dialog extends React.Component {
     constructor(props) {
       super(props);
+      var knownEntities = new Set(this.props.dialog.known_entities);
+
       this.state = {
         message_idx: 1,
+        dialog: this.props.dialog,
+        knownEntities: knownEntities,
       };
     }
 
@@ -56,6 +61,31 @@
           <td>{msg.message}</td>
           <td>{fact_button}</td>
         </tr>
+      );
+    }
+
+    renderKnownEntities(dialog) {
+      var entities = [];
+      for (let entity of dialog.related_entities) {
+        var check = null;
+        if (this.state.knownEntities.has(entity)) {
+          check = <img src="/static/svg/check-green.svg" />;
+        } else {
+          check = <img src="/static/svg/x-red.svg" />;
+        }
+        entities.push(
+          <a class="list-group-item" style={{ width: "400px" }}>
+            {check} {entity}
+          </a>
+        );
+      }
+      return (
+        <ul
+          class="list-group"
+          style={{ flexDirection: "row", flexWrap: "wrap" }}
+        >
+          {entities}
+        </ul>
       );
     }
 
@@ -115,7 +145,7 @@
       );
     }
 
-    renderDialog() {
+    renderDialog(dialog) {
       var aspects = [];
       var i = 1;
       for (let a of dialog.aspects) {
@@ -134,6 +164,10 @@
             <h6 class="card-subtitle mb-2">
               <span class="badge badge-info">Aspects:</span> {aspects}
             </h6>
+            <hr />
+            <h6>User's Previously Known Entities</h6>
+            {this.renderKnownEntities(dialog)}
+            <hr />
             <div class="container-fluid">
               <div class="row">
                 <div class="col-7">{this.renderMessageTable(dialog)}</div>
@@ -156,7 +190,7 @@
       );
     }
     render() {
-      return this.renderDialog();
+      return this.renderDialog(this.props.dialog);
     }
   }
   ReactDOM.render(
@@ -164,3 +198,5 @@
     document.getElementById("dialog")
   );
 </script>
+
+{% endraw %}
