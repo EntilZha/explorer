@@ -11,4 +11,4 @@ RUN poetry export --without-hashes -f requirements.txt > reqs.txt \
     && pip install -r reqs.txt
 
 COPY . /code/dataset-explorer
-CMD ["uvicorn", "--port", "8000", "--host", "0.0.0.0", "explorer.web:app"]
+CMD ["uvicorn", "--port", "8000", "--host", "0.0.0.0", "--workers", "2", "explorer.web:app"]

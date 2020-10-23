@@ -6,6 +6,7 @@ import uvicorn
 from fastapi import FastAPI, Request, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 
 
 from explorer.database import SessionLocal, Question, get_db, CuriosityDbDialog
@@ -18,9 +19,6 @@ with open("data.toml") as f:
 
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/qanta", qanta_app)
-app.mount("/curiosity", curiosity_app)
 
 
 templates = Jinja2Templates(directory="templates")
@@ -31,6 +29,18 @@ async def home(request: Request, db: SessionLocal = Depends(get_db)):
     return templates.TemplateResponse(
         "index.html.jinja2", {"request": request, "datasets": data["datasets"].values()}
     )
+
+
+@app.get("/qanta")
+@app.get("/qanta/")
+async def redirect_qanta():
+    return RedirectResponse("/dataset/qanta", status_code=301)
+
+
+@app.get("/curiosity")
+@app.get("/curiosity/")
+async def redirect_curiosity():
+    return RedirectResponse("/dataset/curiosity", status_code=301)
 
 
 @app.get("/dataset/qanta")
@@ -45,6 +55,11 @@ async def curiosity_dataset(request: Request, db: SessionLocal = Depends(get_db)
     return templates.TemplateResponse(
         "curiosity/landing.html.jinja2", {"request": request}
     )
+
+
+app.mount("/qanta", qanta_app)
+app.mount("/curiosity", curiosity_app)
+app.mount("/", StaticFiles(directory="files"), name="files")
 
 
 if __name__ == "__main__":

@@ -11,10 +11,18 @@ from explorer.curiosity.wiki_db import CuriosityStore
 from explorer.curiosity.data import CuriosityDialog
 
 CACHED_CURIOSITY_IDS = []
+CACHED_CURIOSITY_TOPICS = []
 fact_lookup = CuriosityStore("data/curiosity/wiki_sql.sqlite.db").get_fact_lookup()
 
 curiosity_app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+
+
+def get_curiosity_topics(db: SessionLocal):
+    if len(CACHED_CURIOSITY_TOPICS) == 0:
+        topics = db.query(CuriosityDbDialog.topic).distinct().all()
+        CACHED_CURIOSITY_TOPICS.extend(topics)
+    return CACHED_CURIOSITY_TOPICS
 
 
 def get_html_dialog(db, request: Request, dialog_id: int):
@@ -100,5 +108,5 @@ async def get_dialogs(
 
 @curiosity_app.get("/topics")
 async def get_dialogs(request: Request, db: SessionLocal = Depends(get_db)):
-    topics = db.query(CuriosityDbDialog.topic).distinct().all()
+    topics = get_curiosity_topics(db)
     return {"topics": topics}
