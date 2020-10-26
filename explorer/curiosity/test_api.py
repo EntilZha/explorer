@@ -28,7 +28,7 @@ def test_dialogs_api():
     assert parsed["n_dialogs"] != 0
     assert parsed["n_pages"] != 0
     assert parsed["page"] == 1
-    assert parsed["topic"] == None
+    assert parsed["topic"] is None
 
 
 def test_topics_api():
@@ -37,4 +37,3 @@ def test_topics_api():
     parsed = response.json()
     assert len(parsed["topics"]) != 0
     assert isinstance(parsed["topics"][0], str)
-
