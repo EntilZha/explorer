@@ -29,6 +29,7 @@ jobs:
           port: 22
           key: ${{ secrets.KEY }}
           script: |
+            export GTAG="${{ secrets.GTAG }}"
             cd ~/code/explorer
             docker-compose down
             git pull origin master
