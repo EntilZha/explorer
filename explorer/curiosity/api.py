@@ -5,7 +5,6 @@ import math
 from fastapi import FastAPI, Request, Depends
 from fastapi.templating import Jinja2Templates
 
-from explorer.database import SessionLocal, Question, get_db
 from explorer.database import SessionLocal, get_db, CuriosityDbDialog
 from explorer.curiosity.wiki_db import CuriosityStore
 from explorer.curiosity.data import CuriosityDialog
@@ -59,14 +58,14 @@ async def read_random_dialog(request: Request, db: SessionLocal = Depends(get_db
 
 
 @curiosity_app.get("/dialog/{dialog_id}")
-async def read_question(
+async def read_dialog(
     request: Request, dialog_id: int, db: SessionLocal = Depends(get_db)
 ):
     return get_html_dialog(db, request, dialog_id)
 
 
 @curiosity_app.get("/dialog/topic/{topic}")
-async def read_question(
+async def read_dialogs_by_topic(
     request: Request, topic: str, db: SessionLocal = Depends(get_db)
 ):
     topic_dialogs = db.query(CuriosityDbDialog).filter_by(topic=topic).all()
@@ -98,6 +97,7 @@ async def get_dialogs(
         total = db.query(CuriosityDbDialog).filter_by(topic=topic).count()
     total_pages = math.ceil(total / limit)
     return {
+        "request": request,
         "dialogs": [CuriosityDialog.parse_raw(d.data) for d in dialogs],
         "n_dialogs": total,
         "n_pages": total_pages,
@@ -107,6 +107,6 @@ async def get_dialogs(
 
 
 @curiosity_app.get("/topics")
-async def get_dialogs(request: Request, db: SessionLocal = Depends(get_db)):
+async def get_topics(request: Request, db: SessionLocal = Depends(get_db)):
     topics = get_curiosity_topics(db)
-    return {"topics": topics}
+    return {"request": request, "topics": topics}

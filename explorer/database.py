@@ -90,7 +90,7 @@ class Question(Base):
             "proto_id": self.proto_id,
             "qdb_id": self.proto_id,
             "dataset": self.dataset,
-            "text_with_buzzes": self.text_with_buzzes(max_buzzes=5)
+            "text_with_buzzes": self.text_with_buzzes(max_buzzes=max_buzzes)
             if include_buzzes
             else None,
         }
@@ -167,10 +167,11 @@ class CuriosityDbDialog(Base):
 
     @property
     def url(self):
-        return f'https://datasets.pedro.ai/curiosity/dialog/{self.dialog_id}'
+        return f"https://datasets.pedro.ai/curiosity/dialog/{self.dialog_id}"
 
 
 def build_db():
+    # pylint: disable=bare-except
     log.info("Dropping and Creating DB")
     try:
         Base.metadata.drop_all(bind=engine)
@@ -201,7 +202,7 @@ def build_curiosity():
 
     with get_db_context() as db:
         log.info("Writing dialogs")
-        for fold, d in tqdm(dialogs):
+        for _, d in tqdm(dialogs):
             db.add(
                 CuriosityDbDialog(
                     dialog_id=d.dialog_id,
@@ -220,7 +221,7 @@ def build_curiosity():
 def build_qanta():
     log.info("Loading data")
     with open("data/qanta.mapped.2018.04.18.json") as f:
-        questions = [q for q in json.load(f)["questions"]]
+        questions = json.load(f)["questions"]
 
     df = pd.read_hdf("data/protobowl-042818.log.h5")
     proto_id_to_qanta = {}

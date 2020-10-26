@@ -6,3 +6,5 @@ services:
       - "8000:8000"
     volumes:
       - ./data:/code/dataset-explorer/data
+    environment:
+      - GTAG

@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 
 from explorer.jinja import ConfigurableJinja2Templates
-from explorer.database import SessionLocal, Question, get_db, CuriosityDbDialog
+from explorer.database import SessionLocal, get_db
 from explorer.qanta.api import qanta_app, get_all_qanta_ids, get_html_qanta_question
 from explorer.curiosity.api import curiosity_app
 
@@ -31,7 +31,7 @@ templates = ConfigurableJinja2Templates(
 
 
 @app.get("/")
-async def home(request: Request, db: SessionLocal = Depends(get_db)):
+async def home(request: Request):
     return templates.TemplateResponse(
         "index.html.jinja2", {"request": request, "datasets": data["datasets"].values()}
     )
@@ -57,7 +57,7 @@ async def qanta_dataset(request: Request, db: SessionLocal = Depends(get_db)):
 
 
 @app.get("/dataset/curiosity")
-async def curiosity_dataset(request: Request, db: SessionLocal = Depends(get_db)):
+async def curiosity_dataset(request: Request):
     return templates.TemplateResponse(
         "curiosity/landing.html.jinja2", {"request": request}
     )

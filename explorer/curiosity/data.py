@@ -1,3 +1,4 @@
+# pylint: disable=no-name-in-module
 from typing import List, Optional
 from pydantic import BaseModel
 
