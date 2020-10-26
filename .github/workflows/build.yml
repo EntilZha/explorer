@@ -32,7 +32,10 @@ jobs:
       - name: Code Format
         run: poetry run black --check .
       - name: Test with pytest
-        run: poetry run pytest
+        run: |
+          mkdir -p data
+          wget --directory-prefix data http://qanta.umiacs.io/qanta_viewer.sqlite3
+          poetry run pytest
 
       - name: Deploy to ${{ secrets.HOST }}
         uses: appleboy/ssh-action@master
