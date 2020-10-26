@@ -36,6 +36,8 @@ jobs:
             docker-compose up -d
   check:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
         python-version: [3.8]
 
     steps:
