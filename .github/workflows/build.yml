@@ -34,7 +34,9 @@ jobs:
       - name: Test with pytest
         run: |
           mkdir -p data
-          wget --directory-prefix data http://qanta.umiacs.io/qanta_viewer.sqlite3
+          wget --progress=bar:force:noscroll --directory-prefix data http://qanta.umiacs.io/qanta_viewer.sqlite3
+          mkdir -p data/curiosity
+          wget --progress=bar:force:noscroll --directory-prefix data/curiosity http://curiosity.umiacs.io/wiki_sql.sqlite.db
           ls
           ls data
           poetry run pytest
