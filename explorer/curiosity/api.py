@@ -20,6 +20,12 @@ templates = Jinja2Templates(directory="templates")
 def get_curiosity_topics(db: SessionLocal):
     if len(CACHED_CURIOSITY_TOPICS) == 0:
         topics = db.query(CuriosityDbDialog.topic).distinct().all()
+        for t in topics:
+            if isinstance(t, str):
+                CACHED_CURIOSITY_TOPICS.append(t)
+            else:
+                CACHED_CURIOSITY_TOPICS.append(t[0])
+
         CACHED_CURIOSITY_TOPICS.extend(topics)
     return CACHED_CURIOSITY_TOPICS
 
@@ -73,7 +79,7 @@ async def read_dialogs_by_topic(
     n = len(topic_dialogs)
     return templates.TemplateResponse(
         "curiosity/topics.html.jinja2",
-        {"dialogs": topic_dialogs, "n": n, "topic": topic},
+        {"request": request, "dialogs": topic_dialogs, "n": n, "topic": topic},
     )
 
 
