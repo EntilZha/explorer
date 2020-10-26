@@ -68,6 +68,7 @@ async def read_dialog(
 async def read_dialogs_by_topic(
     request: Request, topic: str, db: SessionLocal = Depends(get_db)
 ):
+    # pylint: disable=unused-argument
     topic_dialogs = db.query(CuriosityDbDialog).filter_by(topic=topic).all()
     n = len(topic_dialogs)
     return templates.TemplateResponse(
@@ -84,6 +85,7 @@ async def get_dialogs(
     page: int = 1,
     db: SessionLocal = Depends(get_db),
 ):
+    # pylint: disable=unused-argument
     if topic is None:
         dialogs = db.query(CuriosityDbDialog).limit(limit).offset((page - 1) * limit)
         total = db.query(CuriosityDbDialog).count()
@@ -107,5 +109,6 @@ async def get_dialogs(
 
 @curiosity_app.get("/topics")
 async def get_topics(request: Request, db: SessionLocal = Depends(get_db)):
+    # pylint: disable=unused-argument
     topics = get_curiosity_topics(db)
     return {"topics": topics}
