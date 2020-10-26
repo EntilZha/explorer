@@ -1,14 +1,14 @@
 import random
+import os
 
 import toml
 import uvicorn
 
 from fastapi import FastAPI, Request, Depends
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 
-
+from explorer.jinja import ConfigurableJinja2Templates
 from explorer.database import SessionLocal, Question, get_db, CuriosityDbDialog
 from explorer.qanta.api import qanta_app, get_all_qanta_ids, get_html_qanta_question
 from explorer.curiosity.api import curiosity_app
@@ -21,7 +21,13 @@ with open("data.toml") as f:
 app = FastAPI()
 
 
-templates = Jinja2Templates(directory="templates")
+GTAG = os.environ.get("GTAG")
+jinja_globals = {}
+if GTAG is not None and len(GTAG) > 0:
+    jinja_globals["GTAG"] = GTAG
+templates = ConfigurableJinja2Templates(
+    directory="templates", jinja_globals=jinja_globals
+)
 
 
 @app.get("/")
