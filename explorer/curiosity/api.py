@@ -72,7 +72,7 @@ async def read_dialogs_by_topic(
     n = len(topic_dialogs)
     return templates.TemplateResponse(
         "curiosity/topics.html.jinja2",
-        {"request": request, "dialogs": topic_dialogs, "n": n, "topic": topic},
+        {"dialogs": topic_dialogs, "n": n, "topic": topic},
     )
 
 
@@ -97,7 +97,6 @@ async def get_dialogs(
         total = db.query(CuriosityDbDialog).filter_by(topic=topic).count()
     total_pages = math.ceil(total / limit)
     return {
-        "request": request,
         "dialogs": [CuriosityDialog.parse_raw(d.data) for d in dialogs],
         "n_dialogs": total,
         "n_pages": total_pages,
@@ -109,4 +108,4 @@ async def get_dialogs(
 @curiosity_app.get("/topics")
 async def get_topics(request: Request, db: SessionLocal = Depends(get_db)):
     topics = get_curiosity_topics(db)
-    return {"request": request, "topics": topics}
+    return {"topics": topics}
